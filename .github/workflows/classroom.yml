@@ -1,0 +1,35 @@
+name: Autograding Tests
+'on':
+  - repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Drop existing pytest files
+      run: rm -f test_*.py *_test.py
+    - name: Move tests
+      run: rm -rf tests/ && mv .github/workflows/tests tests
+    - name: Move .ok file
+      run: rm ses05.ok && mv .github/workflows/ses05.ok ses05.ok
+    - name: Move test script
+      run: mv .github/workflows/ok_to_pytest.py test_ok.py
+    - name: Python test
+      id: python-test
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 1
+        max-score: 5
+        setup-command: 'pip install pandas==2.1.4 jupyter==1.0.0 networkx==3.2.1'
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        PYTHON-TEST_RESULTS: "${{steps.python-test.outputs.result}}"
+      with:
+        runners: python-test
