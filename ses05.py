@@ -14,7 +14,14 @@ def find_min_index(A, k):
     """
     # DON'T CHANGE ANYTHING ABOVE
     # YOUR CODE HERE
-
+    if k < 0 or k >+ len(A):
+        print("Invalid index")
+        return k
+    smallest_index = k
+    for i in range(k + 1, len(A)):
+        if A[i] < A[smallest_index]:
+            smallest_index = i 
+    return smallest_index
 	
 def selection_sort(M):
     """
@@ -39,7 +46,8 @@ def selection_sort(M):
     n = len(L)
     for index in range(n):
         min_index = find_min_index(L, index)
-        # add code to swap elements of L at index and min_index
+        if min_index is not None:
+            L[index], L[min_index] = L[min_index], L[index]   
     return L    
 
 
@@ -66,6 +74,8 @@ def sort_by_key(country_list, key_function):
     """
     # DON'T CHANGE ANYTHING ABOVE
     # YOUR CODE HERE
+    cleaned_list = [tup for tup in country_list if key_function(tup) is not None]
+    return sorted(country_list, key=key_function, reverse = True)
 
 	
 def get_unemployment(x):
@@ -75,3 +85,5 @@ def get_unemployment(x):
     """
     # DON'T CHANGE ANYTHING ABOVE
     # YOUR CODE HERE
+    return float(x[1]) if isinstance(x[1], (int, float)) else 0 
+
